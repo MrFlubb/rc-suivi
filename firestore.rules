@@ -16,8 +16,9 @@ service cloud.firestore {
     function isValidStudent(data) {
       return data.keys().hasAll(['name', 'level', 'slotIndex']) &&
              data.name is string && data.name.size() > 0 &&
-             data.level in ['OR', 'ARGENT', 'BRONZE'] &&
-             data.slotIndex is number;
+             data.level in ['FER', 'BRONZE', 'ARGENT', 'OR'] &&
+             data.slotIndex is number &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 5000));
     }
 
     match /students/{studentId} {

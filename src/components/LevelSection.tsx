@@ -32,29 +32,53 @@ interface LevelSectionProps {
 }
 
 const LEVEL_STYLING = {
+  FER: {
+    bg: 'bg-zinc-800/[0.08]',
+    border: 'border-zinc-700/30',
+    text: 'text-zinc-400',
+    descText: 'text-zinc-500',
+    icon: Footprints,
+    accent: 'bg-zinc-700',
+    borderClass: 'border-zinc-700',
+    shadowClass: 'shadow-zinc-900/40',
+    iconColor: 'text-zinc-600',
+    hover: 'hover:bg-zinc-800/[0.12]'
+  },
   OR: {
-    bg: 'bg-zinc-900/50',
-    border: 'border-red-600/30',
-    text: 'text-zinc-100',
+    bg: 'bg-yellow-500/[0.08]',
+    border: 'border-yellow-500/30',
+    text: 'text-yellow-500',
+    descText: 'text-zinc-300',
     icon: Trophy,
-    accent: 'bg-red-600',
-    label: 'OR'
+    accent: 'bg-yellow-600',
+    borderClass: 'border-yellow-600',
+    shadowClass: 'shadow-yellow-900/40',
+    iconColor: 'text-yellow-500',
+    hover: 'hover:bg-yellow-500/[0.12]'
   },
   ARGENT: {
-    bg: 'bg-zinc-900/40',
-    border: 'border-zinc-800',
+    bg: 'bg-zinc-100/[0.08]',
+    border: 'border-zinc-500/30',
     text: 'text-zinc-300',
+    descText: 'text-zinc-400',
     icon: Music,
-    accent: 'bg-zinc-700',
-    label: 'ARGENT'
+    accent: 'bg-zinc-600',
+    borderClass: 'border-zinc-400',
+    shadowClass: 'shadow-zinc-900/40',
+    iconColor: 'text-zinc-400',
+    hover: 'hover:bg-zinc-100/[0.12]'
   },
   BRONZE: {
-    bg: 'bg-zinc-900/30',
-    border: 'border-zinc-900',
-    text: 'text-zinc-400',
+    bg: 'bg-orange-700/[0.08]',
+    border: 'border-orange-700/30',
+    text: 'text-orange-600',
+    descText: 'text-zinc-400',
     icon: Flame,
-    accent: 'bg-zinc-800',
-    label: 'BRONZE'
+    accent: 'bg-orange-800',
+    borderClass: 'border-orange-800',
+    shadowClass: 'shadow-orange-900/40',
+    iconColor: 'text-orange-700',
+    hover: 'hover:bg-orange-700/[0.12]'
   }
 };
 
@@ -79,26 +103,21 @@ export const LevelSection: React.FC<LevelSectionProps> = ({
 
   return (
     <div className={cn(
-      "w-full rounded-[2.5rem] border border-zinc-800 shadow-sm relative overflow-hidden mb-6 group transition-all hover:bg-zinc-900/80 backdrop-blur-sm",
-      styling.bg
+      "w-full rounded-[2.5rem] border shadow-sm relative overflow-hidden mb-6 group transition-all backdrop-blur-sm",
+      styling.bg,
+      styling.border,
+      styling.hover
     )} id={`section-${level}`}>
-      {/* Promoted Counter Badge */}
-      <div className={cn(
-        "absolute top-4 right-8 px-4 py-1.5 rounded-full text-white text-[10px] font-black tracking-widest uppercase",
-        styling.accent
-      )}>
-        {promotedCount}/{maxSlots} COMPLÉTÉS
-      </div>
-
       <div className="flex flex-col md:flex-row p-6 md:p-8 gap-8 items-center md:items-start">
         {/* Left Side: Info */}
         <div className="md:w-64 flex flex-col items-center md:items-start text-center md:text-left">
           <div className="flex items-center gap-3 mb-2">
-            <h2 className={cn("text-xl font-light tracking-[0.2em] uppercase", styling.text)}>
+            <Icon className={cn("w-5 h-5", styling.iconColor)} />
+            <h2 className={cn("text-xl font-black tracking-tighter uppercase", styling.text)}>
               NIVEAU {level}
             </h2>
           </div>
-          <p className={cn("text-xs font-medium italic opacity-60 leading-relaxed max-w-[200px]", styling.text)}>
+          <p className={cn("text-xs font-semibold italic leading-relaxed max-w-[200px]", styling.descText)}>
             "{description}"
           </p>
         </div>
@@ -112,6 +131,8 @@ export const LevelSection: React.FC<LevelSectionProps> = ({
                 id={slot.id}
                 student={slot.student}
                 onClick={() => onSlotClick(slot.index)}
+                accentColor={styling.borderClass}
+                shadowColor={styling.shadowClass}
               />
             ))}
           </div>

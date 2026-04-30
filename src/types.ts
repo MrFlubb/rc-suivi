@@ -7,7 +7,7 @@ export enum OperationType {
   WRITE = 'write',
 }
 
-export type Level = "OR" | "ARGENT" | "BRONZE";
+export type Level = "FER" | "BRONZE" | "ARGENT" | "OR";
 
 export interface Skills {
   technique: number;
@@ -27,6 +27,7 @@ export interface Student {
   videoBefore?: string;
   videoAfter?: string;
   videoTestimonial?: string;
+  description?: string;
   createdAt: number;
   updatedAt: number;
 }

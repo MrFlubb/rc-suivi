@@ -11,6 +11,8 @@ interface StudentCircleProps {
   onClick: () => void;
   className?: string;
   isDraggable?: boolean;
+  accentColor?: string;
+  shadowColor?: string;
 }
 
 export const StudentCircle: React.FC<StudentCircleProps> = ({ 
@@ -18,7 +20,9 @@ export const StudentCircle: React.FC<StudentCircleProps> = ({
   student, 
   onClick, 
   className,
-  isDraggable = true
+  isDraggable = true,
+  accentColor = "border-red-600",
+  shadowColor = "shadow-red-900/20"
 }) => {
   const {
     attributes,
@@ -62,7 +66,7 @@ export const StudentCircle: React.FC<StudentCircleProps> = ({
       <div 
         className={cn(
           "w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-dashed border-zinc-800 bg-zinc-900/30 flex items-center justify-center transition-all cursor-pointer overflow-hidden",
-          student ? "border-solid border-red-600 shadow-2xl shadow-red-900/20 bg-zinc-800" : "hover:border-zinc-500 hover:bg-zinc-900/50",
+          student ? cn("border-solid bg-zinc-800 shadow-2xl", accentColor, shadowColor) : "hover:border-zinc-500 hover:bg-zinc-900/50",
           isDragging && "scale-110 shadow-xl border-opacity-100"
         )}
       >

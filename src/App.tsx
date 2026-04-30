@@ -16,7 +16,7 @@ import { StudentModal } from './components/StudentModal';
 import { StudentCircle } from './components/StudentCircle';
 import { Level, Student, INITIAL_SKILLS } from './types';
 import { motion, AnimatePresence } from 'motion/react';
-import { Palmtree, Disc } from 'lucide-react';
+import { Palmtree, Disc, Plus } from 'lucide-react';
 
 export default function App() {
   const { students, addStudent, updateStudent, deleteStudent, moveStudent } = useStudents();
@@ -33,6 +33,32 @@ export default function App() {
     })
   );
 
+  const handleAddGlobal = () => {
+    // Find first empty slot in FER (or Bronze if full)
+    let targetLevel: Level = 'FER';
+    let targetStudents = students.filter(s => s.level === targetLevel);
+    let firstEmptyIndex = 0;
+    
+    // Check FER first
+    while (targetStudents.some(s => s.slotIndex === firstEmptyIndex) && firstEmptyIndex < 15) {
+      firstEmptyIndex++;
+    }
+
+    // If FER is full, fallback to Bronze (just in case, though highly unlikely for start)
+    if (firstEmptyIndex >= 15) {
+      targetLevel = 'BRONZE';
+      targetStudents = students.filter(s => s.level === targetLevel);
+      firstEmptyIndex = 0;
+      while (targetStudents.some(s => s.slotIndex === firstEmptyIndex) && firstEmptyIndex < 15) {
+        firstEmptyIndex++;
+      }
+    }
+    
+    setSelectedStudent(null);
+    setModalMode({ level: targetLevel, index: firstEmptyIndex });
+    setIsModalOpen(true);
+  };
+
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
   };
@@ -46,7 +72,7 @@ export default function App() {
       const overId = over.id as string;
       
       // Parse overId (format: slot-{level}-{index})
-      const match = overId.match(/^slot-(OR|ARGENT|BRONZE)-(\d+)$/);
+      const match = overId.match(/^slot-(OR|ARGENT|BRONZE|FER)-(\d+)$/);
       if (match && activeData?.student) {
         const student = activeData.student as Student;
         const newLevel = match[1] as Level;
@@ -77,25 +103,35 @@ export default function App() {
   const activeStudent = activeId ? students.find(s => `slot-${s.level}-${s.slotIndex}` === activeId || `student-${s.id}` === activeId) : null;
 
   return (
-    <div className="min-h-screen bg-[#fcfaf5] p-4 md:p-10 font-sans selection:bg-yellow-200">
+    <div className="min-h-screen bg-zinc-950 p-4 md:p-10 font-sans selection:bg-red-500/30 text-white">
       {/* Background decoration */}
-      <div className="fixed top-4 left-4 opacity-10 rotate-[-15deg] pointer-events-none">
+      <div className="fixed top-4 left-4 opacity-5 rotate-[-15deg] pointer-events-none text-zinc-500">
         <Palmtree className="w-24 h-24" />
       </div>
-      <div className="fixed bottom-4 right-4 opacity-10 rotate-[15deg] pointer-events-none">
+      <div className="fixed bottom-4 right-4 opacity-5 rotate-[15deg] pointer-events-none text-zinc-500">
         <Disc className="w-24 h-24" />
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <header className="mb-12 text-center relative">
+        <header className="mb-12 text-center relative pt-8">
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-black text-gray-800 tracking-tighter uppercase inline-block relative px-4"
+            className="text-3xl md:text-5xl font-light tracking-[0.3em] text-zinc-100 uppercase inline-block relative px-4"
           >
-            SALSA CUBAINE - MON SUIVI DES ÉLÈVES
-            <div className="absolute -bottom-2 left-0 right-0 h-1 bg-yellow-500 rounded-full scale-x-75 opacity-50"></div>
+            SALSA <span className="font-black text-red-600">CUBAINE</span>
+            <div className="text-[10px] tracking-[0.5em] font-black opacity-30 mt-2">MON SUIVI DES ÉLÈVES</div>
           </motion.h1>
+
+          <div className="mt-8">
+            <button 
+              onClick={handleAddGlobal}
+              className="px-8 py-3 bg-red-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-red-700 shadow-xl shadow-red-900/40 transition-all flex items-center gap-3 mx-auto"
+            >
+              <Plus className="w-4 h-4" />
+              Ajouter un nouvel élève
+            </button>
+          </div>
         </header>
 
         <DndContext
@@ -130,6 +166,15 @@ export default function App() {
               students={students.filter(s => s.level === 'BRONZE')}
               maxSlots={15}
               onSlotClick={(index) => handleSlotClick('BRONZE', index)}
+            />
+
+            <LevelSection
+              level="FER"
+              title="NIVEAU FER"
+              description="Elèves qui découvrent les bases (enchufla, vacilence, dile que no)"
+              students={students.filter(s => s.level === 'FER')}
+              maxSlots={15}
+              onSlotClick={(index) => handleSlotClick('FER', index)}
             />
           </div>
 
@@ -185,10 +230,6 @@ export default function App() {
           />
         )}
       </AnimatePresence>
-
-      <footer className="mt-20 text-center text-gray-400 text-xs font-medium tracking-widest uppercase">
-        artrevoution.fr — de danseur à dancepreneur
-      </footer>
     </div>
   );
 }

@@ -7,7 +7,7 @@
       "properties": {
         "name": { "type": "string" },
         "photoUrl": { "type": "string" },
-        "level": { "type": "string", "enum": ["OR", "ARGENT", "BRONZE"] },
+        "level": { "type": "string", "enum": ["FER", "BRONZE", "ARGENT", "OR"] },
         "slotIndex": { "type": "number" },
         "skills": {
           "type": "object",
@@ -22,6 +22,7 @@
         "videoBefore": { "type": "string", "format": "uri" },
         "videoAfter": { "type": "string", "format": "uri" },
         "videoTestimonial": { "type": "string", "format": "uri" },
+        "description": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }
       },

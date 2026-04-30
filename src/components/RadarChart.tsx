@@ -8,11 +8,14 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Skills } from '../types';
+import { cn } from '../lib/utils';
 
 interface SkillsChartProps {
   skills: Skills;
   editable?: boolean;
   onChange?: (newSkills: Skills) => void;
+  color?: string;
+  accentClass?: string;
 }
 
 const SKILL_NAMES: Record<keyof Skills, string> = {
@@ -23,7 +26,13 @@ const SKILL_NAMES: Record<keyof Skills, string> = {
   connexion: 'Connexion',
 };
 
-export const SkillsRadarChart: React.FC<SkillsChartProps> = ({ skills, editable, onChange }) => {
+export const SkillsRadarChart: React.FC<SkillsChartProps> = ({ 
+  skills, 
+  editable, 
+  onChange,
+  color = "#dc2626",
+  accentClass = "accent-red-600"
+}) => {
   const data = Object.entries(skills).map(([key, value]) => ({
     subject: SKILL_NAMES[key as keyof Skills],
     value,
@@ -50,8 +59,8 @@ export const SkillsRadarChart: React.FC<SkillsChartProps> = ({ skills, editable,
             <Radar
               name="Niveau"
               dataKey="value"
-              stroke="#dc2626"
-              fill="#dc2626"
+              stroke={color}
+              fill={color}
               fillOpacity={0.4}
             />
           </RadarChart>
@@ -72,7 +81,7 @@ export const SkillsRadarChart: React.FC<SkillsChartProps> = ({ skills, editable,
                 max="100"
                 value={skills[skill]}
                 onChange={(e) => handleSliderChange(skill, parseInt(e.target.value))}
-                className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-red-600"
+                className={cn("w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer", accentClass)}
               />
             </div>
           ))}
