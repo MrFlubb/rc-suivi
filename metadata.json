@@ -1,0 +1,6 @@
+{
+  "name": "Salsa Master - Suivi Élèves",
+  "description": "Une application de suivi de progression pour les élèves de salsa cubaine avec drag-and-drop et analyse de compétences.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

@@ -1,0 +1,37 @@
+{
+  "entities": {
+    "Student": {
+      "title": "Student",
+      "description": "A salsa student being tracked in a specific level.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "level": { "type": "string", "enum": ["OR", "ARGENT", "BRONZE"] },
+        "slotIndex": { "type": "number" },
+        "skills": {
+          "type": "object",
+          "properties": {
+            "technique": { "type": "number" },
+            "fluidite": { "type": "number" },
+            "musicalite": { "type": "number" },
+            "style": { "type": "number" },
+            "connexion": { "type": "number" }
+          }
+        },
+        "videoBefore": { "type": "string", "format": "uri" },
+        "videoAfter": { "type": "string", "format": "uri" },
+        "videoTestimonial": { "type": "string", "format": "uri" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "level", "slotIndex"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "Student",
+      "description": "Collection of students."
+    }
+  }
+}
