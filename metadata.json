@@ -1,6 +1,6 @@
 {
-  "name": "Salsa Master - Suivi Élèves",
-  "description": "Une application de suivi de progression pour les élèves de salsa cubaine avec drag-and-drop et analyse de compétences.",
+  "name": "Suivi Élève",
+  "description": "Application de suivi des élèves de Salsa Cubaine par ArtRevolution.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
