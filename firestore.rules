@@ -18,7 +18,8 @@ service cloud.firestore {
              data.name is string && data.name.size() > 0 &&
              data.level in ['FER', 'BRONZE', 'ARGENT', 'OR'] &&
              data.slotIndex is number &&
-             (!('description' in data) || (data.description is string && data.description.size() <= 5000));
+             (!('description' in data) || (data.description is string && data.description.size() <= 5000)) &&
+             (!('accessCode' in data) || (data.accessCode is string && data.accessCode.size() <= 100));
     }
 
     match /students/{studentId} {

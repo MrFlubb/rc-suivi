@@ -28,6 +28,7 @@ export interface Student {
   videoAfter?: string;
   videoTestimonial?: string;
   description?: string;
+  accessCode?: string;
   createdAt: number;
   updatedAt: number;
 }

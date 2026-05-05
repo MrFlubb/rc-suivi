@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Pencil, Video, Trash2, Camera, Link as LinkIcon, Save, User } from 'lucide-react';
+import { X, Pencil, Video, Trash2, Camera, Link as LinkIcon, Save, User, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Student, INITIAL_SKILLS } from '../types';
 import { SkillsRadarChart } from './RadarChart';
@@ -8,6 +8,7 @@ import { cn } from '../lib/utils';
 interface StudentModalProps {
   student?: Student;
   isOpen: boolean;
+  isProfessor: boolean;
   onClose: () => void;
   onSave: (data: Partial<Student>) => void;
   onDelete?: (id: string) => void;
@@ -16,17 +17,21 @@ interface StudentModalProps {
 export const StudentModal: React.FC<StudentModalProps> = ({ 
   student, 
   isOpen, 
+  isProfessor,
   onClose, 
   onSave,
   onDelete
 }) => {
-  const [isEditing, setIsEditing] = useState(!student);
+  const [isEditing, setIsEditing] = useState(isProfessor && !student);
+  const [enteredCode, setEnteredCode] = useState('');
+  const [isVerified, setIsVerified] = useState(false);
   const [formData, setFormData] = useState<Partial<Student>>(
     student || {
       name: '',
       photoUrl: '',
       skills: { ...INITIAL_SKILLS },
       description: '',
+      accessCode: '',
       videoBefore: '',
       videoAfter: '',
       videoTestimonial: ''
@@ -35,6 +40,15 @@ export const StudentModal: React.FC<StudentModalProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
+
+  const handleVerify = () => {
+    if (student?.accessCode && enteredCode.toUpperCase() === student.accessCode.toUpperCase()) {
+      setIsVerified(true);
+      setIsEditing(true);
+    } else {
+      alert("Code incorrect !");
+    }
+  };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -80,6 +94,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     formData.level === 'OR' && "border-yellow-600 shadow-yellow-900/20",
                     formData.level === 'ARGENT' && "border-zinc-500 shadow-zinc-900/20",
                     formData.level === 'BRONZE' && "border-orange-800 shadow-orange-900/20",
+                    formData.level === 'FER' && "border-zinc-700 shadow-zinc-900/20",
                     !formData.level && "border-red-600 shadow-red-900/20",
                     isEditing && "cursor-pointer"
                   )}
@@ -109,15 +124,42 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                   accept="image/*"
                 />
                 
-                {!isEditing && (
-                  <button 
-                    type="button"
-                    onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white bg-zinc-800 px-4 md:px-6 py-2 md:py-3 rounded-xl transition-all border border-zinc-700/50"
-                  >
-                    <Pencil className="w-3 h-3 md:w-4 md:h-4" />
-                    Modifier
-                  </button>
+                {!isEditing && !isVerified && (
+                  <div className="flex flex-col gap-3 w-full sm:w-auto">
+                    <button 
+                      type="button"
+                      onClick={() => isProfessor && setIsEditing(true)}
+                      className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white bg-zinc-800 px-4 md:px-6 py-2 md:py-3 rounded-xl transition-all border border-zinc-700/50"
+                    >
+                      {isProfessor ? (
+                        <>
+                          <Pencil className="w-3 h-3 md:w-4 md:h-4" />
+                          Modifier (Mode Prof)
+                        </>
+                      ) : (
+                        "🔒 Lecture Seule"
+                      )}
+                    </button>
+
+                    {!isProfessor && student && (
+                      <div className="flex gap-2">
+                        <input 
+                          type="text"
+                          placeholder="TON CODE D'ACCÈS"
+                          value={enteredCode}
+                          onChange={e => setEnteredCode(e.target.value)}
+                          className="bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-[10px] w-28 focus:outline-none focus:border-red-600 transition-colors uppercase"
+                        />
+                        <button 
+                          type="button"
+                          onClick={handleVerify}
+                          className="bg-red-600 text-white px-3 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-700 transition-colors"
+                        >
+                          EDITER
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -125,14 +167,31 @@ export const StudentModal: React.FC<StudentModalProps> = ({
               <div className="flex-1 w-full space-y-4 md:space-y-6">
                 <div className="space-y-1">
                   {isEditing ? (
-                    <input 
-                      type="text"
-                      placeholder="NOM DE L'ÉLÈVE"
-                      value={formData.name}
-                      onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      className="text-xl md:text-3xl font-black uppercase tracking-tighter w-full bg-zinc-950 border-b border-red-600 p-2 focus:outline-none transition-colors"
-                      required
-                    />
+                    <div className="space-y-4">
+                      <input 
+                        type="text"
+                        placeholder="NOM DE L'ÉLÈVE"
+                        value={formData.name}
+                        onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        className="text-xl md:text-3xl font-black uppercase tracking-tighter w-full bg-zinc-950 border-b border-red-600 p-2 focus:outline-none transition-colors"
+                        required
+                      />
+                      {isProfessor && (
+                        <div className="flex items-center gap-3 bg-red-600/10 p-3 rounded-xl border border-red-600/20">
+                          <Settings className="w-4 h-4 text-red-500" />
+                          <div className="flex-1">
+                            <div className="text-[9px] font-black text-red-500 uppercase tracking-widest mb-1">Identifiant d'accès (Prof uniquement)</div>
+                            <input 
+                              type="text"
+                              placeholder="CODE D'ACCÈS"
+                              value={formData.accessCode || ''}
+                              onChange={e => setFormData(prev => ({ ...prev, accessCode: e.target.value }))}
+                              className="w-full bg-transparent text-xs font-bold focus:outline-none placeholder:text-zinc-700 text-white uppercase"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <>
                       <h2 className="text-xl md:text-3xl font-black uppercase tracking-tighter">{formData.name}</h2>
@@ -162,7 +221,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                       "w-1.5 h-1.5 rounded-full",
                       formData.level === 'OR' ? "bg-yellow-500" : 
                       formData.level === 'ARGENT' ? "bg-zinc-400" : 
-                      formData.level === 'BRONZE' ? "bg-orange-700" : "bg-red-600"
+                      formData.level === 'BRONZE' ? "bg-orange-700" : 
+                      formData.level === 'FER' ? "bg-zinc-600" : "bg-red-600"
                     )}></div>
                     Analyse des Compétences
                   </h3>
@@ -201,7 +261,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                               "w-full pl-9 pr-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-[10px] md:text-xs focus:ring-1 transition-all text-white placeholder:text-zinc-700",
                               formData.level === 'OR' ? "focus:ring-yellow-600" : 
                               formData.level === 'ARGENT' ? "focus:ring-zinc-400" : 
-                              formData.level === 'BRONZE' ? "focus:ring-orange-800" : "focus:ring-red-600"
+                              formData.level === 'BRONZE' ? "focus:ring-orange-800" : 
+                              formData.level === 'FER' ? "focus:ring-zinc-600" : "focus:ring-red-600"
                             )}
                           />
                         </div>
@@ -218,7 +279,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                                 "w-3 h-3 md:w-4 md:h-4",
                                 formData.level === 'OR' ? "text-yellow-600" : 
                                 formData.level === 'ARGENT' ? "text-zinc-400" : 
-                                formData.level === 'BRONZE' ? "text-orange-800" : "text-red-500"
+                                formData.level === 'BRONZE' ? "text-orange-800" : 
+                                formData.level === 'FER' ? "text-zinc-600" : "text-red-500"
                               )} />
                               {item.label}
                             </span>
@@ -237,7 +299,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
           </div>
 
           <div className="p-6 md:p-8 flex flex-col-reverse sm:flex-row justify-between items-center bg-zinc-950/80 border-t border-zinc-800 gap-4">
-            {student ? (
+            {student && isProfessor ? (
               <button 
                 type="button"
                 onClick={() => {
@@ -266,7 +328,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     "px-6 md:px-8 py-3 md:py-4 text-white rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 order-1 sm:order-2 shadow-xl",
                     formData.level === 'OR' ? "bg-yellow-600 hover:bg-yellow-700 shadow-yellow-900/20" : 
                     formData.level === 'ARGENT' ? "bg-zinc-600 hover:bg-zinc-700 shadow-zinc-900/20" : 
-                    formData.level === 'BRONZE' ? "bg-orange-800 hover:bg-orange-900 shadow-orange-900/20" : "bg-red-600 hover:bg-red-700 shadow-red-900/20"
+                    formData.level === 'BRONZE' ? "bg-orange-800 hover:bg-orange-900 shadow-orange-900/20" : 
+                    formData.level === 'FER' ? "bg-zinc-700 hover:bg-zinc-800 shadow-zinc-900/20" : "bg-red-600 hover:bg-red-700 shadow-red-900/20"
                   )}
                 >
                   <Save className="w-3 h-3 md:w-4 md:h-4" />
